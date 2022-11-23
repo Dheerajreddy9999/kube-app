@@ -6,7 +6,7 @@ metadata:
     app: vprodb
 spec:
   selector:
-    matchlabels:
+    matchLabels:
       app: vprodb
   replicas: 1
   template:
@@ -17,20 +17,24 @@ spec:
       volumes:
         - name: vpro-db-data
           persistentVolumeClaim:
-            claimName: db_volume
+            claimName: db-volume
       containers:
         - name: vprodb
           image: vprofile/vprofiledb:V1
-          volumeMounts:
-            - mountPath: /var/lib/mysql
-              name: vpro-db-data
+          args:
+            - "--ignore-db-dir=lost+found"
           ports:
             - name: vprodb-port
               containerPort: 3306
+          volumeMounts:
+            - mountPath: /var/lib/mysql
+              name: vpro-db-data
           env:
-            - name: MYSQL_ROOT_PASSOWRD
+            - name: MYSQL_ROOT_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: app-secret
                   key: db-pass
+
+
     
